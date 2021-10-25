@@ -1,0 +1,247 @@
+[
+    {
+        "id": "55a45ba5c7a31a7e",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "0c885ae76470eaea",
+        "type": "inject",
+        "z": "55a45ba5c7a31a7e",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payloadType": "date",
+        "x": 100,
+        "y": 60,
+        "wires": [
+            [
+                "e1b7241309e552a5"
+            ]
+        ]
+    },
+    {
+        "id": "db94f9b530522744",
+        "type": "plate-recognizer",
+        "z": "55a45ba5c7a31a7e",
+        "name": "",
+        "inputField": "payload",
+        "inputFieldType": "msg",
+        "outputField": "payload",
+        "outputFieldType": "msg",
+        "url": "https://api.platerecognizer.com/v1/plate-reader/",
+        "ignoreDuring": true,
+        "makeAndModel": false,
+        "statusText": "count",
+        "cameraId": "",
+        "separateMsg": false,
+        "regionFilter": false,
+        "regionList": "[]",
+        "regionListType": "json",
+        "x": 300,
+        "y": 140,
+        "wires": [
+            [
+                "8c83152c17dba319",
+                "e32412e549d44cca"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "e32412e549d44cca",
+        "type": "debug",
+        "z": "55a45ba5c7a31a7e",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 530,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "6aea49f03e16b26b",
+        "type": "http request",
+        "z": "55a45ba5c7a31a7e",
+        "name": "",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "query",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 330,
+        "y": 440,
+        "wires": [
+            [
+                "e32412e549d44cca"
+            ]
+        ]
+    },
+    {
+        "id": "8c83152c17dba319",
+        "type": "function",
+        "z": "55a45ba5c7a31a7e",
+        "name": "",
+        "func": "\nif(msg.payload.results.length>0)\n{\n   var type = msg.payload.results[0].vehicle.type;\n   var plate = msg.payload.results[0].plate;\n   msg.url = 'http://localhost/carmanager/ui/add.php?plate='+plate+'&type='+type;\n   msg.payload = \"envoi de la requette\"; \n}\nelse\n{\n   msg.payload = \"aucun resultat\"; \n    msg.url = 'http://localhost/carmanager/ui/nourl.php';\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 140,
+        "y": 300,
+        "wires": [
+            [
+                "e32412e549d44cca",
+                "6aea49f03e16b26b"
+            ]
+        ]
+    },
+    {
+        "id": "e1b7241309e552a5",
+        "type": "http request",
+        "z": "55a45ba5c7a31a7e",
+        "name": "",
+        "method": "GET",
+        "ret": "bin",
+        "paytoqs": "ignore",
+        "url": "https://24hcongo.net/wp-content/uploads/2018/11/aa14610f65b3.jpg",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 130,
+        "y": 140,
+        "wires": [
+            [
+                "db94f9b530522744"
+            ]
+        ]
+    },
+    {
+        "id": "afb281163708be4d",
+        "type": "ui_webcam",
+        "z": "55a45ba5c7a31a7e",
+        "name": "",
+        "group": "3e9ddb646d5f9c4a",
+        "order": 1,
+        "width": 17,
+        "height": 9,
+        "countdown": false,
+        "autoStart": true,
+        "hideCaptureButton": true,
+        "showImage": 0,
+        "mirror": true,
+        "format": "png",
+        "x": 480,
+        "y": 60,
+        "wires": [
+            [
+                "66225548f866bb63",
+                "db94f9b530522744",
+                "8710484c3c2809da"
+            ]
+        ]
+    },
+    {
+        "id": "aa96d9b0731e2ca0",
+        "type": "inject",
+        "z": "55a45ba5c7a31a7e",
+        "name": "",
+        "props": [
+            {
+                "p": "capture",
+                "v": "capture",
+                "vt": "str"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "capture",
+        "payloadType": "str",
+        "x": 290,
+        "y": 60,
+        "wires": [
+            [
+                "afb281163708be4d"
+            ]
+        ]
+    },
+    {
+        "id": "66225548f866bb63",
+        "type": "image",
+        "z": "55a45ba5c7a31a7e",
+        "name": "",
+        "width": "204",
+        "data": "payload",
+        "dataType": "msg",
+        "thumbnail": false,
+        "active": true,
+        "pass": false,
+        "outputs": 0,
+        "x": 840,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "8710484c3c2809da",
+        "type": "image viewer",
+        "z": "55a45ba5c7a31a7e",
+        "name": "",
+        "width": 160,
+        "data": "payload",
+        "dataType": "msg",
+        "active": true,
+        "x": 1050,
+        "y": 120,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "3e9ddb646d5f9c4a",
+        "type": "ui_group",
+        "name": "webcame",
+        "tab": "4d7ab7f45c7777f9",
+        "order": 1,
+        "disp": true,
+        "width": 17,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "4d7ab7f45c7777f9",
+        "type": "ui_tab",
+        "name": "camera",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]
